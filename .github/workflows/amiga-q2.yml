@@ -1,0 +1,83 @@
+name: Amiga Q2 runtime
+
+on:
+  push:
+    paths:
+      - 'examples/**'
+      - 'runtime/**'
+      - 'tools/prepare-runtime-payload.sh'
+      - 'Makefile.amiga'
+      - '.github/workflows/amiga-q2.yml'
+  pull_request:
+    paths:
+      - 'examples/**'
+      - 'runtime/**'
+      - 'tools/prepare-runtime-payload.sh'
+      - 'Makefile.amiga'
+      - '.github/workflows/amiga-q2.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  q1-build:
+    runs-on: ubuntu-latest
+    env:
+      AMIGA_DEV_IMAGE: ghcr.io/ploos-as/amiga-dev:sha-a786bb7
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pull pinned amiga-dev
+        run: docker pull "$AMIGA_DEV_IMAGE"
+      - name: Verify toolchain
+        run: docker run --rm "$AMIGA_DEV_IMAGE" amiga-check
+      - name: Build 68000 payload
+        run: |
+          docker run --rm \
+            -e AMIGA_CPU_PROFILE=68000 \
+            -v "$PWD:/workspace" \
+            "$AMIGA_DEV_IMAGE" \
+            amiga-build make -f Makefile.amiga check
+          sh tools/prepare-runtime-payload.sh build-amiga/hello runtime-payload
+      - uses: actions/upload-artifact@v4
+        with:
+          name: eduamigac-runtime-payload
+          path: runtime-payload/
+          if-no-files-found: error
+
+  q2-runtime:
+    needs: q1-build
+    runs-on: ubuntu-latest
+    env:
+      AMIGA_RUNTIME_IMAGE: ghcr.io/ploos-as/amiga-runtime:sha-d8a6889
+    steps:
+      - name: Download Q1 payload
+        uses: actions/download-artifact@v4
+        with:
+          name: eduamigac-runtime-payload
+          path: runtime-input
+      - name: Verify contract
+        run: |
+          test -s runtime-input/amiga-runtime.json
+          test -s runtime-input/hello
+          jq -e '.schema == 1 and .architecture == "m68k"' runtime-input/amiga-runtime.json >/dev/null
+      - name: Pull pinned amiga-runtime
+        run: docker pull "$AMIGA_RUNTIME_IMAGE"
+      - name: Runtime self-test
+        run: docker run --rm "$AMIGA_RUNTIME_IMAGE" self-test
+      - name: Qualify EduAmigaC payload
+        run: |
+          mkdir -p runtime-evidence
+          docker run --rm \
+            -v "$PWD/runtime-input:/work/input:ro" \
+            -v "$PWD/runtime-evidence:/work/evidence" \
+            "$AMIGA_RUNTIME_IMAGE" \
+            qualify-contract /work/input
+      - name: Upload runtime evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eduamigac-q2-runtime-evidence
+          path: runtime-evidence/
+          if-no-files-found: warn
