@@ -1,0 +1,22 @@
+CC ?= m68k-amigaos-gcc
+CFLAGS ?= -m68000 -Os -Wall -Wextra -Wpedantic
+LDFLAGS ?= -noixemul
+BUILD := build-amiga
+HELLO := examples/hello/hello.c
+
+.PHONY: all check clean
+
+all: $(BUILD)/hello
+
+$(BUILD):
+	mkdir -p $(BUILD)
+
+$(BUILD)/hello: $(HELLO) | $(BUILD)
+	$(CC) $(CFLAGS) $< $(LDFLAGS) -o $@
+
+check: all
+	test -s $(BUILD)/hello
+	amiga-inspect $(BUILD)/hello
+
+clean:
+	rm -rf $(BUILD)
