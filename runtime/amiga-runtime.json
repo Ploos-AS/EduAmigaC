@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "project": "EduAmigaC",
+  "milestone": "M0-Q2-seed",
+  "architecture": "m68k",
+  "payload": {
+    "kind": "program",
+    "program": "hello"
+  },
+  "emulator_profiles": [
+    "amiga-ocs-68000-1m"
+  ],
+  "result": {
+    "log": "hello.log",
+    "required_lines": [
+      "Hello from EduAmigaC!"
+    ]
+  },
+  "policy": {
+    "roms_in_repository": false,
+    "amigaos_files_in_repository": false
+  }
+}
