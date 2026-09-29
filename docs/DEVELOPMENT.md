@@ -1,17 +1,23 @@
 # Development environment
 
-EduAmigaC deliberately does not embed a complete Amiga cross-development environment in this repository.
+EduAmigaC keeps compiler and emulator infrastructure outside the course repository.
 
-## Host documentation work
+## Q0 — host work
 
-Markdown/course development and repository validation can be done on an ordinary Linux host with `make check`.
+Markdown/course development and repository validation run on an ordinary Linux host with `make check`.
 
-## Target development
+## Q1 — target build
 
-m68k builds should be performed through the shared Ploos-AS/amiga-dev environment. Runtime qualification should be performed through Ploos-AS/amiga-runtime.
+The shared Ploos-AS/amiga-dev OCI environment performs m68k builds. CI pins an immutable image reference and currently builds the first example for 68000 through `Makefile.amiga`.
 
-This separation keeps the educational repository small and makes compiler/runtime qualification reusable across Ploos Amiga projects.
+## Q2/Q3 — runtime automation
 
-## Later automation
+A Q1 binary is staged with `runtime/amiga-runtime.json` and passed read-only to Ploos-AS/amiga-runtime. Runtime evidence is written separately and retained as a CI artifact.
 
-A later milestone will wire CI to a pinned amiga-dev release/image and pass produced binaries into the runtime qualification harness. Toolchain versions must be recorded so course examples remain reproducible.
+The build and runtime stages remain separate so a compiler PASS cannot be mistaken for an execution PASS.
+
+## Q4/Q5
+
+Classic AmigaOS assets are supplied externally where legally required. Real-hardware qualification is recorded separately when applicable. Neither is implied by free-runtime or emulator qualification.
+
+This separation keeps EduAmigaC small while making compiler/runtime qualification reusable across Ploos Amiga projects.
