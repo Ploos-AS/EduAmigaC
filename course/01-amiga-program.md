@@ -15,7 +15,9 @@ Connect existing C knowledge to a native AmigaOS program and understand that Ami
 
 ## First lab
 
-Study and build `examples/hello-amiga/hello-amiga.c` with the supported Amiga toolchain when available.
+Study `examples/hello/hello.c`. Build it with `make -f Makefile.amiga check` inside the qualified `amiga-dev` environment.
+
+The first course baseline is 68000. A successful cross-build is Q1 evidence only; it is not runtime proof.
 
 ## Checkpoint
 
