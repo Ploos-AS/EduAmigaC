@@ -5,6 +5,8 @@ on:
     paths:
       - 'examples/**'
       - 'Makefile.amiga'
+      - 'runtime/**'
+      - 'tools/prepare-runtime-payload.sh'
       - '.github/workflows/amiga-q1.yml'
   pull_request:
     paths:
@@ -30,9 +32,12 @@ jobs:
             -v "$PWD:/workspace" \
             "$AMIGA_DEV_IMAGE" \
             amiga-build make -f Makefile.amiga check
-      - name: Upload Q1 artifact
+      - name: Stage runtime payload
+        run: sh tools/prepare-runtime-payload.sh build-amiga/hello runtime-payload
+
+      - name: Upload Q1 runtime payload
         uses: actions/upload-artifact@v4
         with:
           name: eduamigac-q1-m68k-68000
-          path: build-amiga/
+          path: runtime-payload/
           if-no-files-found: error
