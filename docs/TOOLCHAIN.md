@@ -1,20 +1,24 @@
 # Amiga toolchain contract
 
-EduAmigaC uses a real m68k Amiga C toolchain for target builds. Host-only CI is not considered sufficient qualification for target code.
+EduAmigaC uses the shared Ploos-AS `amiga-dev` environment for real m68k target builds and Ploos-AS `amiga-runtime` for execution evidence. Host-only CI is not target qualification.
 
-## Intended integration
+## Reproducibility
 
-The Ploos-AS **amiga-dev** environment supplies the maintained development toolchain (including the Bebbo-based toolchain used by Ploos Amiga projects). EduAmigaC should consume that environment rather than duplicate a compiler stack.
+CI consumes immutable OCI references: a digest or `sha-*` tag. `edge` may be used for integration experiments but is not a reproducibility boundary.
 
-The Ploos-AS **amiga-runtime** environment supplies emulator-based runtime qualification.
+The initial course target is 68000. Broader CPU claims are added only after the consumer command path is qualified for them.
 
-## Qualification levels
+## Qualification model
 
-1. **Host repository check** — structure and static repository checks.
-2. **m68k build PASS** — examples compile/link for the declared Amiga target.
-3. **Runtime PASS** — selected examples execute successfully in a qualified emulator/profile.
-4. **Regression PASS** — representative examples continue to work across declared OS/machine profiles.
+- **Q0 — host checks:** repository structure, policy, validation and host-side tests.
+- **Q1 — m68k cross-build:** compile/link the declared target with `amiga-dev` and inspect the produced binary.
+- **Q2 — free m68k runtime:** execute project payload through the redistributable AROS/m68k runtime where the program/API set is compatible.
+- **Q3 — automated emulator integration:** preserve machine-readable evidence from qualified emulator/runtime integration and, where applicable, compare supported backends.
+- **Q4 — real AmigaOS:** qualify against externally supplied legal Kickstart/AmigaOS assets. Q2/Q3 AROS evidence is never presented as Q4.
+- **Q5 — real hardware:** physical-machine qualification where a chapter or release requires it.
+
+A chapter or release states the highest level actually demonstrated; lower-level success does not imply a higher level.
 
 ## Legal boundary
 
-No Kickstart ROM, Workbench/AmigaOS installation, proprietary SDK material or other redistributability-restricted system file may be committed to EduAmigaC. Runtime environments must obtain such material externally where legally required.
+No Kickstart ROM, Workbench/AmigaOS installation, proprietary SDK material, license key, or other restricted system file may be committed to EduAmigaC. Q4 assets remain external to public CI and distributable artifacts.
