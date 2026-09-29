@@ -7,13 +7,18 @@
 - [x] First Amiga chapter/example seed
 
 ## Engineering
-- [x] Host repository CI gate
-- [x] amiga-dev toolchain contract
-- [x] amiga-runtime qualification contract
-- [x] Initial classic runtime profiles defined
-- [x] Dependency-free course validator
-- [ ] First real m68k build qualified through shared toolchain
-- [ ] First runtime PASS through shared emulator infrastructure
+- [x] Q0 host repository gate defined
+- [x] amiga-dev Q1 toolchain contract
+- [x] amiga-runtime project contract
+- [x] Immutable amiga-dev image pinned for the first 68000 build
+- [x] Q1-to-runtime artifact handoff implemented
+- [x] Q2 workflow implemented with an immutable amiga-runtime candidate reference
+- [x] Q0-Q5 evidence semantics documented
+- [ ] Q1 m68k build observed PASS in GitHub Actions
+- [ ] Q2 project runtime observed PASS with required guest evidence
+- [ ] Q3 project emulator-integration evidence qualified
+- [ ] Q4 classic AmigaOS evidence (not required to call structural M0 complete)
+- [ ] Q5 hardware evidence (not required for M0)
 
 ## Publishing
 - [x] Web/book publishing contract
@@ -24,4 +29,4 @@
 
 ## M0 exit
 
-Repository M0 is structurally complete. Full target M0 qualification remains pending until a real m68k build, runtime execution and publishing/AmigaGuide path have been exercised.
+Repository structure and qualification plumbing are implemented. M0 is not evidence-complete until the first Q1 and Q2 runs are observed PASS and the publishing/AmigaGuide path has been exercised. Missing evidence remains a failure to claim that qualification level.
