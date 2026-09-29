@@ -1,0 +1,38 @@
+name: Amiga Q1 build
+
+on:
+  push:
+    paths:
+      - 'examples/**'
+      - 'Makefile.amiga'
+      - '.github/workflows/amiga-q1.yml'
+  pull_request:
+    paths:
+      - 'examples/**'
+      - 'Makefile.amiga'
+      - '.github/workflows/amiga-q1.yml'
+
+jobs:
+  q1-m68k-build:
+    runs-on: ubuntu-latest
+    env:
+      AMIGA_DEV_IMAGE: ghcr.io/ploos-as/amiga-dev:sha-a786bb7
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pull qualified immutable amiga-dev image
+        run: docker pull "$AMIGA_DEV_IMAGE"
+      - name: Verify toolchain contract
+        run: docker run --rm "$AMIGA_DEV_IMAGE" amiga-check
+      - name: Build EduAmigaC 68000 examples
+        run: |
+          docker run --rm \
+            -e AMIGA_CPU_PROFILE=68000 \
+            -v "$PWD:/workspace" \
+            "$AMIGA_DEV_IMAGE" \
+            amiga-build make -f Makefile.amiga check
+      - name: Upload Q1 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: eduamigac-q1-m68k-68000
+          path: build-amiga/
+          if-no-files-found: error
