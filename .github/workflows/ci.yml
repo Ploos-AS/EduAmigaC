@@ -7,5 +7,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Validate M0 repository
+      - name: Validate repository
         run: make check
+  student-oci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build student image
+        run: docker build -t eduamigac-student:test .
+      - name: Inspect student environment
+        run: docker run --rm eduamigac-student:test student-env-info
+      - name: Run student checks
+        run: docker run --rm -v "$PWD:/course" eduamigac-student:test student-check
