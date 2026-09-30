@@ -1,0 +1,5 @@
+#!/bin/sh
+set -eu
+cd /course
+make check
+make -f Makefile.amiga check
