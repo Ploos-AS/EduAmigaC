@@ -1,4 +1,4 @@
-CC ?= m68k-amigaos-gcc
+CC = m68k-amigaos-gcc
 CFLAGS ?= -m68000 -Os -Wall -Wextra -Wpedantic
 LDFLAGS ?= -noixemul
 BUILD := build-amiga
