@@ -1,0 +1,6 @@
+#!/bin/sh
+set -eu
+printf '%s\n' 'PLOOS-STUDENT-OCI-1' 'course=EduAmigaC' 'workspace=/course' 'target=m68k-amigaos'
+printf 'compiler='; m68k-amigaos-gcc --version | head -n 1
+printf 'make='; make --version | head -n 1
+printf 'python='; python3 --version
